@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 from numpy.f2py.auxfuncs import throw_error
 
 ITERATION = 1000
-MU = 0.001
-N = 7
+MU = 0.002
+N = 16
 
 def reg_lin():
     x = np.array([-0.95, -0.82, -0.62, -0.43, -0.17, -0.07, 0.25, 0.38, 0.61, 0.79, 1.04])
