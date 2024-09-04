@@ -74,7 +74,8 @@ class Sigmoid(Layer):
         raise NotImplementedError()
 
     def forward(self, x):
-        raise NotImplementedError()
+        result = 1 / (1 + np.exp(-x))
+        return result, result
 
     def backward(self, output_grad, cache):
         raise NotImplementedError()
@@ -92,7 +93,8 @@ class ReLU(Layer):
         raise NotImplementedError()
 
     def forward(self, x):
-        raise NotImplementedError()
+        result = ( x >= 0).astype(float) * x
+        return result, result
 
     def backward(self, output_grad, cache):
         raise NotImplementedError()
