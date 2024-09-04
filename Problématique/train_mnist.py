@@ -28,8 +28,7 @@ def create_network(checkpoint_path):
         FullyConnectedLayer(128, 32),
         BatchNormalization(32),
         ReLU(),
-        FullyConnectedLayer(32, 10),
-        Sigmoid(),
+        FullyConnectedLayer(32, 10)
     ]
     network = Network(layers)
     if checkpoint_path is not None:

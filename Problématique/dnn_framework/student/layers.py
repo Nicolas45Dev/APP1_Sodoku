@@ -43,7 +43,7 @@ class BatchNormalization(Layer):
     epsilon: float = 1e-8
     def __init__(self, input_count, alpha=0.1):
         self.alpha = alpha
-        self.gamma = np.zeros(input_count)
+        self.gamma = np.ones(input_count)
         self.beta = np.zeros(input_count)
         self.mean = np.zeros(input_count)
         self.variance = np.ones(input_count)
