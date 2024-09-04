@@ -205,3 +205,4 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+/Problématique/result

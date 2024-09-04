@@ -18,7 +18,7 @@ class FullyConnectedLayer(Layer):
         return {'w': self.w, 'b': self.b}
 
     def get_buffers(self):
-        raise NotImplementedError()
+        return {}
 
     def forward(self, x):
         return [x @ self.w.T + self.b, x]
@@ -102,10 +102,10 @@ class Sigmoid(Layer):
     """
 
     def get_parameters(self):
-        raise NotImplementedError()
+        return {}
 
     def get_buffers(self):
-        raise NotImplementedError()
+        return {}
 
     def forward(self, x):
         result = 1 / (1 + np.exp(-x))
@@ -113,7 +113,7 @@ class Sigmoid(Layer):
 
     def backward(self, output_grad, cache):
         y, _ = self.forward(cache)
-        return [(y - y ** 2) * output_grad, cache]
+        return [(y - y ** 2) * output_grad, {"y": (y - y ** 2) * output_grad}]
 
 
 class ReLU(Layer):
@@ -122,11 +122,10 @@ class ReLU(Layer):
     """
 
     def get_parameters(self):
-        return ()
+        return {}
 
     def get_buffers(self):
-        # Quelques choses?
-        raise NotImplementedError()
+        return {}
 
     def forward(self, x):
         y = ( x >= 0).astype(float) * x
@@ -134,4 +133,4 @@ class ReLU(Layer):
 
     def backward(self, output_grad, cache):
         y = ( cache >= 0).astype(float) * output_grad
-        return [y,cache]
+        return [y,{"y":y}]
