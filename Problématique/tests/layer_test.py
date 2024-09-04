@@ -11,10 +11,11 @@ class LayerTestCase(unittest.TestCase):
         layer = FullyConnectedLayer(2, 1)
         layer.get_parameters()['w'][:] = np.array([[2, 3]])
         layer.get_parameters()['b'][:] = np.array([1])
-        x = np.array([[-1.0, 0.5]])
+        x = np.array([[-1.0, 0.5], [-2.0, 1.0]])
         y, _ = layer.forward(x)
-
         self.assertAlmostEqual(y[0], 0.5, delta=DELTA)
+        self.assertAlmostEqual(y[1], 0.0, delta=DELTA)
+
 
     def test_fully_connected_layer_forward_backward(self):
         self.assertTrue(test_layer_input_grad(FullyConnectedLayer(4, 10), (2, 4)))
