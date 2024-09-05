@@ -4,7 +4,9 @@ import time
 from tqdm import tqdm
 
 from dnn_framework.dataset import DatasetLoader
+import matplotlib.pyplot as plt
 
+plt.switch_backend('Qt5Agg')
 
 class Trainer:
     """
@@ -31,6 +33,7 @@ class Trainer:
         self._output_path = output_path
 
         self._loss = loss
+        self._loss_values = 0
         self._optimizer = optimizer
         self._training_dataset = training_dataset
         self._validation_dataset = validation_dataset
@@ -46,6 +49,16 @@ class Trainer:
         """
         os.makedirs(self._output_path, exist_ok=True)
 
+        plt.ion()
+        fig, ax = plt.subplots()
+        line, = ax.plot([], [], 'r-')  # Initialiser une ligne vide
+
+        # Configurer les axes
+        ax.set_xlim(0, 100)  # Ajuster selon le nombre de batches
+        ax.set_ylim(0, 2)  # Ajuster selon la plage des valeurs de loss
+
+        loss_values = []
+
         for epoch in range(self._epoch_count):
             print('Training - Epoch [{}/{}]'.format(epoch + 1, self._epoch_count), flush=True)
             self._train_one_epoch()
@@ -53,9 +66,28 @@ class Trainer:
             print('\nValidation - Epoch [{}/{}]'.format(epoch + 1, self._epoch_count), flush=True)
             self._validate()
 
-            self._save_checkpoint(epoch + 1)
-            self._save_figures(self._output_path)
+            # self._save_checkpoint(epoch + 1)
+            # self._save_figures(self._output_path)
             self._print_metrics()
+
+            loss_values.append(self._loss_values)
+
+            # Mise à jour des données de la ligne
+            line.set_xdata(range(len(loss_values)))
+            line.set_ydata(loss_values)
+
+            # Ajuster l'échelle des x si nécessaire
+            ax.set_xlim(0, len(loss_values))
+            ax.set_ylim(0, max(loss_values) * 1.1)  # Ajuster dynamiquement l'axe y
+
+            # Redessiner la figure
+            fig.canvas.draw()
+            fig.canvas.flush_events()
+
+            plt.plot(loss_values, '-o', color='tab:blue', label='Training')
+
+        plt.ioff()
+        plt.show()
 
         print('\nTest')
         self._network.eval()
@@ -79,8 +111,8 @@ class Trainer:
         self._network.eval()
         for x, target in tqdm(self._validation_dataset_loader):
             y = self._network.forward(x)
-            loss, _ = self._loss.calculate(y, target)
-            self._measure_validation_metrics(loss, y, target)
+            self._loss_values, _ = self._loss.calculate(y, target)
+            self._measure_validation_metrics(self._loss_values, y, target)
 
     def _save_checkpoint(self, epoch):
         self._network.save(os.path.join(self._output_path, 'checkpoint_epoch_{}.pkl'.format(epoch)))
