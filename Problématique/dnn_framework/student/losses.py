@@ -37,6 +37,18 @@ def softmax(x):
     return exp_x / np.sum(exp_x, axis=1, keepdims=True)
 
 
+class HuberLoss(Loss):
+
+    def calculate(self, x, target):
+        """
+        :param x: The input tensor (shape: any)
+        :param target: The target tensor (shape: same as x)
+        :return A tuple containing the loss and the gradient with respect to the input (loss, input_grad)
+        """
+        delta = 1
+        error = np.where(np.abs(x - target) < delta, 0.5 * (x - target) ** 2, delta * (np.abs(x - target) - 0.5 * delta))
+        return np.mean(error), np.where(np.abs(x - target) < delta, x - target, delta * np.sign(x - target)) / x.size
+
 class MeanSquaredErrorLoss(Loss):
     """
     This class implements a mean squared error loss.

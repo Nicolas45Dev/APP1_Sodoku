@@ -1,6 +1,6 @@
 import argparse
 
-from dnn_framework import Network, FullyConnectedLayer, BatchNormalization, ReLU, Sigmoid, CrossEntropyLoss
+from dnn_framework import Network, FullyConnectedLayer, BatchNormalization, ReLU
 from mnist import MnistTrainer
 
 

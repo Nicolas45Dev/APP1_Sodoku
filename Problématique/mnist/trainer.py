@@ -4,13 +4,15 @@ from tqdm import tqdm
 
 from dnn_framework import Trainer, CrossEntropyLoss, SgdOptimizer, \
     LossMetric, ClassificationAccuracyMetric, LossAccuracyLearningCurves
+from dnn_framework.student.optimizers import AdamOptimizer
 from mnist.dataset import MnistDataset
 
 
 class MnistTrainer(Trainer):
     def __init__(self, network, learning_rate, epoch_count, batch_size, output_path):
         loss = CrossEntropyLoss()
-        optimizer = SgdOptimizer(network.get_parameters(), learning_rate=learning_rate)
+        # optimizer = SgdOptimizer(network.get_parameters(), learning_rate=learning_rate)
+        optimizer = AdamOptimizer(network.get_parameters(), learning_rate=learning_rate)
 
         training_dataset = MnistDataset('training')
         validation_dataset = MnistDataset('validation')
