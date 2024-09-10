@@ -50,14 +50,20 @@ class Trainer:
         os.makedirs(self._output_path, exist_ok=True)
 
         plt.ion()
-        fig, ax = plt.subplots()
-        line, = ax.plot([], [], 'r-')  # Initialiser une ligne vide
+        fig = plt.figure(figsize=(4, 2), dpi=200)
+        ax1 = fig.add_subplot(121)
+        ax2 = fig.add_subplot(122)
 
         # Configurer les axes
-        ax.set_xlim(0, 100)  # Ajuster selon le nombre de batches
-        ax.set_ylim(0, 2)  # Ajuster selon la plage des valeurs de loss
+        ax1.set_xlim(0, 100)  # Ajuster selon le nombre de batches
+        ax1.set_ylim(0, 2)  # Ajuster selon la plage des valeurs de loss
 
-        loss_values = []
+        loss_values_training = []
+        loss_values_validation = []
+        accuracy_values_training = []
+        accuracy_values_validation = []
+
+        metrics_tuple = []
 
         for epoch in range(self._epoch_count):
             print('Training - Epoch [{}/{}]'.format(epoch + 1, self._epoch_count), flush=True)
@@ -68,23 +74,39 @@ class Trainer:
 
             # self._save_checkpoint(epoch + 1)
             # self._save_figures(self._output_path)
-            self._print_metrics()
+            metrics_tuple = self._print_metrics()
 
-            loss_values.append(self._loss_values)
+            loss_values_training.append(metrics_tuple[3])
+            loss_values_validation.append(metrics_tuple[2])
+            accuracy_values_training.append(metrics_tuple[1])
+            accuracy_values_validation.append(metrics_tuple[0])
+
+
+            ax1.clear()
+            ax2.clear()
 
             # Mise à jour des données de la ligne
-            line.set_xdata(range(len(loss_values)))
-            line.set_ydata(loss_values)
+            ax1.plot(loss_values_training, '-o', color='tab:blue', label='Training')
+            ax1.plot(loss_values_validation, '-o', color='tab:orange', label='Validation')
+            ax1.set_title(u'Loss')
+
+            ax2.plot(accuracy_values_training, '-o', color='tab:blue', label='Training')
+            ax2.plot(accuracy_values_validation, '-o', color='tab:orange', label='Validation')
+            ax2.set_title(u'Accuracy')
 
             # Ajuster l'échelle des x si nécessaire
-            ax.set_xlim(0, len(loss_values))
-            ax.set_ylim(0, max(loss_values) * 1.1)  # Ajuster dynamiquement l'axe y
+            ax1.set_xlim(0, len(loss_values_training) + 1)  # Ajuster dynamiquement l'axe x
+            ax1.set_ylim(0, max(loss_values_training) * 1.1)  # Ajuster dynamiquement l'axe y
+
+            ax2.set_xlim(0, len(accuracy_values_training) + 1)  # Ajuster dynamiquement l'axe x
+            ax2.set_ylim(0, 1)  # Ajuster dynamiquement l'axe y
+
+            ax1.legend()
+            ax2.legend()
 
             # Redessiner la figure
             fig.canvas.draw()
             fig.canvas.flush_events()
-
-            plt.plot(loss_values, '-o', color='tab:blue', label='Training')
 
         plt.ioff()
         plt.show()

@@ -52,10 +52,12 @@ class MnistTrainer(Trainer):
         self._learning_curves.save_figure(os.path.join(output_path, 'learning_curves.png'))
 
     def _print_metrics(self):
-        print('\nTraining : Loss={}, Accuracy={}'.format(self._training_loss_metric.get_loss(),
-                                                         self._training_accuracy_metric.get_accuracy()))
-        print('Validation : Loss={}, Accuracy={}\n'.format(self._validation_loss_metric.get_loss(),
-                                                           self._validation_accuracy_metric.get_accuracy()))
+        print('\nTraining : Loss={:.3f}, Accuracy={:.3f}'.format(self._training_loss_metric.get_loss() * 100,
+                                                         self._training_accuracy_metric.get_accuracy() * 100))
+        print('Validation : Loss={:.3f}, Accuracy={:.3f}\n'.format(self._validation_loss_metric.get_loss() * 100,
+                                                           self._validation_accuracy_metric.get_accuracy() * 100))
+
+        return self._validation_accuracy_metric.get_accuracy(), self._training_accuracy_metric.get_accuracy(), self._validation_loss_metric.get_loss(), self._training_loss_metric.get_loss()
 
     def _test(self, network, test_dataset_loader):
         test_accuracy_metric = ClassificationAccuracyMetric()
